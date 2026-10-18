@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function () {
+            var t = localStorage.getItem("theme");
+            if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>David Long — Software Engineer</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+        <symbol id="email-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+        </symbol>
+        <symbol id="linkedin-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 114.127 0 2.063 2.063 0 01-2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.222 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </symbol>
+        <symbol id="github-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0112 4.8c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </symbol>
+    </svg>
+
+    <header class="bar">
+        <a class="brand" href="index.html">David Long</a>
+        <div class="bar-end">
+            <a class="icon-link" href="mailto:davernlon@gmail.com" aria-label="Email">
+                <svg><use href="#email-icon"/></svg>
+            </a>
+            <a class="icon-link" href="https://www.linkedin.com/in/daverlon" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <svg><use href="#linkedin-icon"/></svg>
+            </a>
+            <a class="icon-link" href="https://github.com/daverlon" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <svg><use href="#github-icon"/></svg>
+            </a>
+            <button id="theme-toggle" type="button" aria-label="Toggle color theme">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="home">
+        <section class="hero">
+            <h1>David Long</h1>
+            <p class="lede">
+                I build production systems across Android wearable tech and full-stack platforms, with a focus on
+                performance, real-time processing, and efficient AI integration.
+            </p>
+        </section>
+
+        <section id="work">
+            <div class="mosaic">
+                <article class="piece">
+                    <a class="piece-hit" href="gestureband.html" aria-label="Gesture Band"></a>
+                    <div class="piece-media">
+                        <video autoplay muted loop playsinline>
+                            <source src="vid/gesture_preview.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>Gesture Band <span class="year">2026</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/Gesture-Recording-Studio" target="_blank" rel="noopener noreferrer" aria-label="Gesture Band on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Kotlin · Compose · BLE · IMU · Wearables</p>
+                        <p class="blurb">Custom IMU wristband and Gesture Recording Studio for hands-free app control. Four real-time navigation gestures from minutes of training data.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+
+                <article class="piece">
+                    <a class="piece-hit" href="airwriting.html" aria-label="Air Writing"></a>
+                    <div class="piece-media fit">
+                        <img src="vid/airwriting_preview.gif" alt="Air writing pipeline: wrist orientation projected onto a page and classified as a letter">
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>Air Writing <span class="year">2026</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/IMU-Air-Writing-Demo" target="_blank" rel="noopener noreferrer" aria-label="Air Writing on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Python · PyTorch · Kotlin · nRF52840</p>
+                        <p class="blurb">Hands-free letters from a wrist-worn 6-axis IMU. Orientation projects a virtual pen onto a locked page, then a handwriting model reads the stroke.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="mosaic-row">
+                <article class="piece">
+                    <a class="piece-hit" href="symly.html" aria-label="Symly.ai"></a>
+                    <div class="piece-media">
+                        <img src="img/symly_preview.png" alt="Symly.ai tutor highlighting steps on handwritten algebra">
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>Symly.ai <span class="year">2026</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/symly.ai" target="_blank" rel="noopener noreferrer" aria-label="Symly.ai on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Spring Boot · React · Gemini</p>
+                        <p class="blurb">An AI math tutor for handwritten homework that maps steps on the page and highlights them in chat.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+
+                <article class="piece">
+                    <a class="piece-hit" href="kotlinyolo.html" aria-label="KotlinYOLO"></a>
+                    <div class="piece-media">
+                        <img src="img/kotlinyolo_preview.png" alt="On-device YOLO detections running on smart glasses">
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>KotlinYOLO <span class="year">2025</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/KotlinYOLO" target="_blank" rel="noopener noreferrer" aria-label="KotlinYOLO on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Kotlin · Android · Vuzix</p>
+                        <p class="blurb">Real-time YOLO11n and YOLOv8n inference on Vuzix M400 and Blade 2.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+
+                <article class="piece">
+                    <a class="piece-hit" href="sourcesniffer.html" aria-label="sourcesniffer"></a>
+                    <div class="piece-media">
+                        <video autoplay muted loop playsinline>
+                            <source src="vid/sourcesniffer_preview.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>sourcesniffer <span class="year">2025</span></h3>
+                        </div>
+                        <p class="stack">Kotlin · Reverse engineering</p>
+                        <p class="blurb">Real-time packet analysis of Source Engine traffic, with protocol reconstruction and message inspection.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="mosaic-row" style="grid-template-columns: 1fr 1fr;">
+                <article class="piece">
+                    <a class="piece-hit" href="engtoid.html" aria-label="ENGtoID"></a>
+                    <div class="piece-media fit">
+                        <img src="img/engtoid_performance.png" alt="ENGtoID training and validation curves">
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>ENGtoID <span class="year">2024</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/ENGtoID" target="_blank" rel="noopener noreferrer" aria-label="ENGtoID on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Python · PyTorch · LSTM</p>
+                        <p class="blurb">A ~20M parameter sequence-to-sequence model translating English into Indonesian.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+
+                <article class="piece">
+                    <a class="piece-hit" href="taxisearch.html" aria-label="taxi-search"></a>
+                    <div class="piece-media fit">
+                        <img src="img/taxisearch_preview.png" alt="Search algorithm comparison in the Taxi-v3 environment">
+                    </div>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3>taxi-search <span class="year">2024</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/taxi-search" target="_blank" rel="noopener noreferrer" aria-label="taxi-search on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Python · Search · Taxi-v3</p>
+                        <p class="blurb">A*, uniform-cost, breadth-first, and depth-first search, benchmarked in Taxi-v3.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="archive-head">
+                <h2>Also</h2>
+                <select id="project-sort" aria-label="Sort other projects">
+                    <option value="date-desc">Newest first</option>
+                    <option value="date-asc">Oldest first</option>
+                    <option value="name">Name (A–Z)</option>
+                </select>
+            </div>
+
+            <div class="archive">
+                <article class="piece entry">
+                    <a class="piece-hit" href="https://github.com/daverlon/clap-detector" target="_blank" rel="noopener noreferrer" aria-label="clap-detector"></a>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3><span class="project-name">clap-detector</span> <span class="date year">2026</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/clap-detector" target="_blank" rel="noopener noreferrer" aria-label="clap-detector on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Python · YOLO · PySide6</p>
+                        <p class="blurb">Real-time clap detection from YOLO wrist keypoints, scored on the derivative of normalised wrist distance.</p>
+                    </div>
+                </article>
+
+                <article class="piece entry">
+                    <a class="piece-hit" href="https://github.com/daverlon/MiniMonitor" target="_blank" rel="noopener noreferrer" aria-label="MiniMonitor and WattBar"></a>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3><span class="project-name">MiniMonitor &amp; WattBar</span> <span class="date year">2026</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/MiniMonitor" target="_blank" rel="noopener noreferrer" aria-label="MiniMonitor on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Swift · macOS</p>
+                        <p class="blurb">Menu bar apps for CPU, RAM, and GPU, plus battery wattage, watt-hours, and temperature.</p>
+                    </div>
+                </article>
+
+                <article class="piece entry">
+                    <a class="piece-hit" href="minimalinstructionset.html" aria-label="minimal-instruction-set"></a>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3><span class="project-name">minimal-instruction-set</span> <span class="date year">2025</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/minimal-instruction-set" target="_blank" rel="noopener noreferrer" aria-label="minimal-instruction-set on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">C</p>
+                        <p class="blurb">A stack-based virtual machine in C, with a custom instruction set, labels, jumps, and subroutine calls.</p>
+                        <span class="more">View project</span>
+                    </div>
+                </article>
+
+                <article class="piece entry">
+                    <a class="piece-hit" href="https://github.com/daverlon/ngram-wordgen" target="_blank" rel="noopener noreferrer" aria-label="ngram-wordgen"></a>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3><span class="project-name">ngram-wordgen</span> <span class="date year">2023</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/ngram-wordgen" target="_blank" rel="noopener noreferrer" aria-label="ngram-wordgen on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">Python · Flask</p>
+                        <p class="blurb">Character n-gram models, later extended to generate tweets and reviews.</p>
+                    </div>
+                </article>
+
+                <article class="piece entry">
+                    <a class="piece-hit" href="https://github.com/daverlon/Candy2D" target="_blank" rel="noopener noreferrer" aria-label="Candy2D"></a>
+                    <div class="piece-copy">
+                        <div class="piece-top">
+                            <h3><span class="project-name">Candy2D</span> <span class="date year">2023</span></h3>
+                            <a class="ext" href="https://github.com/daverlon/Candy2D" target="_blank" rel="noopener noreferrer" aria-label="Candy2D on GitHub"><svg><use href="#github-icon"/></svg></a>
+                        </div>
+                        <p class="stack">C++ · SDL2 · ECS</p>
+                        <p class="blurb">A cross-platform 2D engine with sprite animation, tilemaps, and collision detection.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="theme.js"></script>
+    <script>
+        function getYear(entry) {
+            const dateEl = entry.querySelector(".date");
+            if (!dateEl) return 0;
+            const match = dateEl.textContent.match(/\d{4}/);
+            return match ? parseInt(match[0], 10) : 0;
+        }
+
+        function getName(entry) {
+            const nameEl = entry.querySelector(".project-name");
+            return nameEl ? nameEl.textContent.toLowerCase() : "";
+        }
+
+        function sortProjects(mode) {
+            const container = document.querySelector(".archive");
+            const entries = [...container.querySelectorAll(".entry")];
+            const sorted = [...entries];
+
+            if (mode === "date-desc") sorted.sort((a, b) => getYear(b) - getYear(a));
+            else if (mode === "date-asc") sorted.sort((a, b) => getYear(a) - getYear(b));
+            else if (mode === "name") sorted.sort((a, b) => getName(a).localeCompare(getName(b)));
+
+            sorted.forEach((entry) => container.appendChild(entry));
+        }
+
+        const select = document.getElementById("project-sort");
+        sortProjects(select.value);
+        select.addEventListener("change", () => sortProjects(select.value));
+    </script>
+</body>
+
+</html>

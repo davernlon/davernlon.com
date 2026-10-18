@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <script>
+        (function () {
+            var t = localStorage.getItem("theme");
+            if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Air Writing — David Long</title>
+
+        <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="study">
+
+    <header class="bar">
+        <a class="brand" href="index.html">David Long</a>
+        <nav class="bar-nav">
+            <a href="index.html#work">Work</a>
+        </nav>
+        <div class="bar-end">
+            <button id="theme-toggle" type="button" aria-label="Toggle color theme">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <a href="index.html" class="back">← back</a>
+
+        <div class="resume-name">Air Writing</div>
+
+        <div class="resume-contact">
+            <a href="https://github.com/daverlon/IMU-Air-Writing-Demo" target="_blank">
+                github.com/daverlon/IMU-Air-Writing-Demo
+            </a>
+        </div>
+
+        <div class="meta">
+            Python · PyTorch · Kotlin · nRF52840 · BLE · IMU · Madgwick · EMNIST · HCI
+        </div>
+
+        <div class="section-heading">Overview</div>
+        <div class="text-block">
+            Hands-free letter input from the same wrist-worn 6-axis IMU as
+            <a href="gestureband.html">Gesture Band</a>. Firmware already runs Madgwick
+            fusion and streams roll / pitch / yaw with the raw accel/gyro. The host treats
+            orientation as a hinge: a virtual pen tip of fixed length is rotated with the
+            wrist, a writing page is locked in space, and the tip is orthographically
+            projected onto that plane. The resulting polyline is rasterised to 28×28 and
+            classified by a small CNN trained on public EMNIST Letters — not on IMU windows.
+        </div>
+        <div class="text-block">
+            Accel is never double-integrated. There is no ZUPT / INS position estimate.
+            Path on the page is <code>length × Δangle</code>; speed used for ink gating is
+            the Euclidean derivative of the smoothed 2D point. The Python demo
+            (<code>page_projection.py</code>) is the reference pipeline. The same
+            projection is used in the Kotlin field-service checklist, with navigation
+            gestures still driving UI and air-written letters filling text fields.
+        </div>
+
+        <img src="vid/airwriting_preview.gif" alt="Air writing pipeline demo" style="margin-bottom: 4px; max-width: 100%; height: auto; display: block;">
+
+        <div class="text-block italic">
+            The clip shows the Python projection demo (virtual tip, locked page, 28×28
+            raster, letter commit), then the same pipeline in the Kotlin field-service
+            app, with wrist gestures for navigation.
+        </div>
+
+        <div class="section-heading">Failed approach: letters as gesture classes</div>
+        <div class="text-block">
+            Gesture Recording Studio already trains a compact classifier on 240&nbsp;ms
+            windows (24 samples at 100&nbsp;Hz) with nine hand-crafted features (gyro/accel
+            std, range, axis dominance) and multi-class logistic regression. That works
+            for four mutually exclusive navigation bursts. Treating A–Z as more of those
+            classes did not:
+        </div>
+        <ul>
+            <li>Writer variation is large; a 26-class (plus idle) labelled set is an order of magnitude more capture than four gestures</li>
+            <li>Window summaries throw away stroke geometry — I / L / T / 1 occupy similar gyro energy</li>
+            <li>A letter is a seconds-long trajectory, not a 240&nbsp;ms burst, so start/end and multi-stroke structure never enter the feature vector</li>
+        </ul>
+        <div class="text-block">
+            The fix is representational. Map the wrist into the ink domain handwriting
+            models already occupy, then reuse a public 28×28 glyph classifier. The same
+            projection then works for other alphabets or symbols by swapping only the
+            recogniser.
+        </div>
+
+        <div class="section-heading">Geometry</div>
+        <div class="text-block">
+            Each BLE sample carries Euler angles from Madgwick. They are converted to a
+            quaternion with a pitch sign flip so the band frame matches the sketchbook
+            pose (forearm bent, writing toward the other palm). The local +X axis is
+            rotated to a unit pointing vector <code>f</code> and a tip
+            <code>p = R(q) · (L, 0, 0)</code> with <code>L = 0.16&nbsp;m</code> in the
+            Python demo (0.28&nbsp;m in the Kotlin 3D preview, so smaller wrist angles
+            still span a readable glyph).
+        </div>
+        <div class="text-block">
+            A page is a plane with origin at the tip and normal along <code>f</code> at
+            lock time. Basis is gravity-upright: world up <code>(0,0,1)</code> is
+            projected out of <code>f</code>; if the residual is shorter than 0.25 (forearm
+            nearly vertical) a horizontal fallback is used, then
+            <code>right = up × f</code> and <code>up</code> is re-orthogonalised.
+            Instantaneous page coordinates are
+        </div>
+        <div class="text-block" style="font-family: monospace; font-size: 12px; margin-left: 18px;">
+            x = −(p − origin) · right<br>
+            y = (p − origin) · up
+        </div>
+        <div class="text-block">
+            Position is EMA-smoothed toward that target (α = 0.30) so ink and speed share
+            the same lag; speed is a second EMA (α = 0.55) of
+            <code>‖Δxy‖ / Δt</code> with <code>Δt</code> clamped to 4–200&nbsp;ms.
+            A 1.15 gain slightly enlarges the glyph without changing the speed gate.
+            After lock, origin and forward are frozen for the stroke so later wrist roll
+            cannot warp the letter.
+        </div>
+
+        <div class="section-heading">Ink gate, page re-aim, trim</div>
+        <div class="text-block">
+            Usability was mostly a state machine on page speed, not more model capacity.
+            Thresholds are in metres/second on the projected point:
+        </div>
+        <ul>
+            <li><b>Start ink</b> at 0.14&nbsp;m/s so a parked or slow hand does not write</li>
+            <li><b>Hold ink</b> down to 0.08&nbsp;m/s so a slow curve (bowl of B, hook of J) does not drop out</li>
+            <li><b>Pre-buffer</b> 160&nbsp;ms of samples; on the rising edge, points above 0.035&nbsp;m/s are prepended so the gate does not clip the first stroke of T / N / K / Y</li>
+            <li><b>Re-aim</b> while not inking and speed &lt; 0.035&nbsp;m/s: <code>lock_page()</code> every sample (Python) / higher follow rates while gyro is quiet (Kotlin). The page tracks the palm until ink starts, then freezes</li>
+            <li><b>Lead-in trim</b> drops the first 5% of path length after the letter is closed</li>
+            <li><b>Still-tail trim</b> drops trailing drift after the last point that exceeded 0.05&nbsp;m/s — that tail is an artefact of waiting for a pause, and on one measured letter was 63% of the path (~4 points of accuracy when removed)</li>
+        </ul>
+        <div class="text-block">
+            A secondary segmenter can cut at velocity minima (speed falling to 50% of the
+            current peak, then recovering above the stroke threshold, ignoring dips
+            shorter than 80&nbsp;ms / 5 points) for multi-stroke letters. Letter gap is
+            260&nbsp;ms still; word gap 1200&nbsp;ms. Live commit in the demo currently
+            treats one pause-delimited polyline as one glyph.
+        </div>
+
+        <div class="section-heading">Rasterisation</div>
+        <div class="text-block">
+            The polyline is drawn into a 224×224 buffer (8× the 28×28 output), centred,
+            aspect-preserving, with padding 0.12–0.20 of the frame. Gaps ≥70&nbsp;ms or
+            ≥2.2&nbsp;cm are pen-ups and are not connected. A 0.8&nbsp;px Gaussian blur
+            and bilinear downsample produce an EMNIST-like white-on-black glyph; y-up
+            page coordinates are flipped to image y-down. Ink thickness is scaled so
+            the downsampled stroke roughly matches EMNIST pen width.
+        </div>
+
+        <div class="section-heading">Classifier</div>
+        <div class="text-block">
+            <code>LetterCNN</code> is trained on EMNIST Letters (A–Z), images transposed
+            to upright, 40k train samples, Adam 1e−3, 3 epochs, CPU. Architecture:
+        </div>
+        <ul>
+            <li>Conv 1→32, 3×3, pad 1, ReLU, 2×2 max-pool</li>
+            <li>Conv 32→64, 3×3, pad 1, ReLU, 2×2 max-pool</li>
+            <li>FC 64×7×7 → 256, ReLU, dropout 0.3 → 26 logits</li>
+        </ul>
+        <div class="text-block">
+            Air-written glyphs are slanted and uneven relative to pen EMNIST. At inference
+            each stroke is rendered as a 5×3×2 grid of views — rotations
+            {−15, −8, 0, +8, +15}°, ink weights {0.7, 1.0, 1.4}, paddings {0.12, 0.20} —
+            30 tensors in one batch. Softmax is <b>averaged</b> across views, not maxed
+            (max lets one unlucky high-confidence wrong view win). On 53 held-out
+            air-written letters that average was worth ~4 points; widening rotation past
+            ±15° lost accuracy again.
+        </div>
+        <div class="text-block">
+            A shape prior then damps classes that cannot match the bounding-box aspect
+            <code>width/height</code>. Below 0.36, only I/J keep full mass; T/E/F are
+            halved; everything else is crushed to 0.12. Between 0.36 and 0.58, wide
+            letters H/M/N/W/U are damped. A 0.20 threshold was too tight: a real I in
+            “DAVID” landed at 0.31 and lost to L.
+        </div>
+        <div class="text-block">
+            Averaging flattens scores: a correct letter sits around 0.59, a wrong one
+            around 0.34. Live commit therefore uses 0.34 as a floor, not as “sure”.
+        </div>
+
+        <div class="section-heading">Commit policy and lexicon</div>
+        <div class="text-block">
+            Inference runs every 100&nbsp;ms once the stroke has ≥16 points. Commit
+            requires the hand below the hold-ink threshold, a prediction newer than the
+            still event, confidence ≥0.34, and top-1 minus top-2 ≥0.05. Three consecutive
+            agreeing letters must hold for 400&nbsp;ms, or 550&nbsp;ms if the guess is in
+            <code>ILCJPT</code> (stems of F/E/R/T — locking early turns an F into an I).
+            If the margin is too tight the hold timer resets. After commit the page
+            resets (~1.5&nbsp;s) so the next letter does not inherit the last pose.
+        </div>
+        <div class="text-block">
+            A prefix lexicon (system word list plus a small domain set) then reweights
+            the 26-way distribution by how often each letter continues the current stem.
+            Illegal continuations are multiplied by 0.28, not zeroed, so a novel word can
+            still win if the shape is overwhelming. If confidence ≥0.50 and the top-two
+            margin ≥0.12, the lexicon is skipped.
+        </div>
+        <div class="text-block">
+            A 28×28 preview of the raster and a short 880&nbsp;Hz ding on commit made
+            timing obvious. False positives dropped more from that feedback and the
+            hysteresis gate than from extra EMNIST epochs.
+        </div>
+
+        <div class="section-heading">Hardware and transport</div>
+        <ul>
+            <li>nRF52840 + LSM6DS3 at 100&nbsp;Hz; Madgwick on-device; BLE UART notify <code>6E400003-…</code></li>
+            <li>40-byte samples <code>&lt;I9f</code>: <code>timestamp_ms</code>, gx/gy/gz, ax/ay/az, roll, pitch, yaw — same framing as Gesture Recording Studio</li>
+            <li>Scan: manufacturer 0xFFFF / ASCII <code>SY</code>, or GAP name <code>BAND</code></li>
+            <li>Wrist mount for the demo (cabled during capture). Index-finger mount gave finer <code>L·Δθ</code> control but more tremor; would need lower EMA α and a higher start-ink threshold</li>
+        </ul>
+
+        <div class="section-heading">System design</div>
+        <ul>
+            <li><code>page_projection.py</code> — pygame host: live BLE + canned loop, ink state machine, commit, 3D page view</li>
+            <li><code>motion.py</code> — quaternion tip, gravity-upright basis, EMA pose/speed, explicit <code>lock_page()</code></li>
+            <li><code>segmenter.py</code> — hysteresis cuts, <code>trim_lead</code>, <code>trim_still_tail</code></li>
+            <li><code>rasterize.py</code> — supersampled polyline → 28×28, pen-up gaps</li>
+            <li><code>classifier.py</code> — <code>LetterCNN</code>, 30-view TTA, aspect prior</li>
+            <li><code>ble_client.py</code> — Bleak client, 40-byte unpack</li>
+            <li>Kotlin <code>MotionPipeline</code> — same hinge/projection; idle nlerp of page forward/origin, freeze-on-motion</li>
+        </ul>
+
+        <div class="section-heading">Technical challenges</div>
+        <ul>
+            <li>IMU-window classifiers cannot separate letters that share similar 6-axis energy but differ in 2D topology</li>
+            <li>A page that tracks forever shears the glyph; a page that locks too early writes at an awkward angle — re-aim only while still</li>
+            <li>Single speed threshold either false-starts or drops slow bowls; hysteresis + 160&nbsp;ms pre-buffer is the working compromise</li>
+            <li>Domain gap: air strokes vs pen EMNIST — TTA average and aspect prior recover more than training on a tiny custom IMU set</li>
+            <li>I vs L: aspect 0.36, extra hold on prefix letters, and refuse-to-commit when top-2 margin &lt; 0.05</li>
+            <li>Sliding-window lead-in crop cost 10–15 points on 53 letters because the first stroke of T/N/K/Y <i>is</i> the glyph — do not record until the hand plants instead</li>
+        </ul>
+
+        <div class="section-heading">What I learned</div>
+        <ul>
+            <li>For alphabet input, a geometric projection into a dataset the field already solved beats collecting 26 IMU classes</li>
+            <li>Orientation-only hinge position is stable enough; accel integration is unnecessary and would drift</li>
+            <li>The commit state machine (hysteresis, hold, margin, prefix delay, page reset) is most of the UX</li>
+            <li>Mean-pool TTA is safer than max-pool when views can be confidently wrong</li>
+            <li>A raster preview plus a beep closes the feedback loop the IMU otherwise does not provide</li>
+            <li>Mount location is a gain/noise trade: wrist is convenient; finger needs heavier filtering</li>
+        </ul>
+
+        <div class="section-heading">Current status</div>
+        <ul>
+            <li>Live Python BLE demo with page preview, TTA CNN, and hold-to-commit</li>
+            <li>Same projection in the Kotlin field-service demo alongside the four navigation gestures</li>
+            <li>Public weights: <code>models/emnist_letters_cnn.pt</code> in <a href="https://github.com/daverlon/IMU-Air-Writing-Demo" target="_blank">IMU-Air-Writing-Demo</a></li>
+            <li>Band, capture app, and gesture classifier: <a href="gestureband.html">Gesture Band</a></li>
+        </ul>
+
+        <div class="section-heading">Future work</div>
+        <ul>
+            <li>Finger-mount filtering (lower position EMA, gyro-based tremor notch, higher start-ink)</li>
+            <li>Using velocity-minimum cuts for true multi-stroke letters instead of one polyline per pause</li>
+            <li>Export the CNN to ONNX and run the 28×28 path on-device / on glasses</li>
+            <li>Swap only the recogniser for digits, other scripts, or symbol sets on the same plane</li>
+        </ul>
+
+    </div>
+
+    <script src="theme.js"></script>
+
+</body>
+
+</html>

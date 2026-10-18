@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ENGtoID — David Long</title>
+
+    <script>
+        (function () {
+            var t = localStorage.getItem("theme");
+            if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
+        <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="study">
+
+    <header class="bar">
+        <a class="brand" href="index.html">David Long</a>
+        <nav class="bar-nav">
+            <a href="index.html#work">Work</a>
+        </nav>
+        <div class="bar-end">
+            <button id="theme-toggle" type="button" aria-label="Toggle color theme">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <a href="index.html" class="back">← back</a>
+
+        <div class="resume-name">ENGtoID</div>
+
+        <div class="resume-contact">
+            <a href="https://github.com/daverlon/ENGtoID" target="_blank">
+                github.com/daverlon/ENGtoID
+            </a>
+        </div>
+
+        <div class="meta">
+            Seq2Seq · LSTM · PyTorch · NLP · Machine Translation · Data Preprocessing · Tokenization
+        </div>
+
+        <div class="section-heading">Overview</div>
+        <div class="text-block">
+            ENGtoID is a sequence-to-sequence neural machine translation system that translates English
+            sentences into Bahasa Indonesia using an LSTM encoder-decoder architecture.
+        </div>
+        <div class="image-center">
+            <img src="img/engtoid_performance.png" alt="ENGtoID performance" width="350px">
+        </div>
+        <div class="text-block italic" style="text-align: center;">
+            The plots show the training and validation performance of the model, demonstrating dips in accuracy
+            caused by experimental teacher forcing
+        </div>
+
+        <div class="text-block">
+            The project was built as an end-to-end ML pipeline, covering dataset ingestion, cleaning,
+            vocabulary construction, training, evaluation, and error analysis at scale (~1M sentence pairs).
+        </div>
+
+        <div class="section-heading">Pipeline Design</div>
+        <ul>
+            <li>Dataset download from HuggingFace (opus-Indonesian-to-English)</li>
+            <li>Regex-based cleaning and filtering of noisy sentence pairs</li>
+            <li>Vocabulary construction with ~250k combined tokens</li>
+            <li>Token → index encoding with fixed special tokens</li>
+            <li>PyTorch Dataset + DataLoader pipeline for training</li>
+        </ul>
+
+        <div class="section-heading">Model Architecture</div>
+        <ul>
+            <li><b>Encoder:</b> LSTM encodes English sentence into fixed context vector</li>
+            <li><b>Decoder:</b> autoregressive LSTM generates Indonesian tokens</li>
+            <li><b>Loss:</b> CrossEntropy with padding ignored</li>
+            <li><b>Embedding size:</b> 512 hidden dimensions</li>
+        </ul>
+
+        <div class="section-heading">Training Strategy</div>
+        <ul>
+            <li>Trained on ~1M sentence pairs using RTX 4090 (cloud)</li>
+            <li>Multi-phase learning rate schedule (from 1e-3 → 1e-5)</li>
+            <li>Teacher forcing ratio gradually reduced to improve inference robustness</li>
+            <li>Batch size adjustments to stabilise later-stage training</li>
+        </ul>
+
+        <div class="section-heading">Key Engineering Decisions</div>
+        <ul>
+            <li>Adam optimizer for stable convergence on large-scale dataset</li>
+            <li>Single-layer LSTM chosen over deeper stacked variants for capacity efficiency</li>
+            <li>Explicit vocabulary control to ensure reproducibility</li>
+            <li>Manual dataset pipeline for full training transparency</li>
+        </ul>
+
+        <div class="section-heading">Evaluation</div>
+        <ul>
+            <li>Token-level accuracy used for training monitoring</li>
+            <li>BLEU scoring used for validation evaluation</li>
+            <li>Observed plateau after early training epochs (~50%+ accuracy)</li>
+            <li>Validation set significantly smaller than training set (~0.2%)</li>
+        </ul>
+
+        <div class="section-heading">Error Analysis</div>
+        <ul>
+            <li>Punctuation and sentence termination errors (<code>.</code>, <code>,</code>, <code>&lt;EOS&gt;</code>)
+            </li>
+            <li>Word order inconsistencies in generated output</li>
+            <li>Difficulty with pronouns and function words</li>
+            <li>Frequent <code>&lt;UNK&gt;</code> substitutions for rare tokens</li>
+        </ul>
+
+        <div class="section-heading">Limitations</div>
+        <ul>
+            <li>Whitespace tokenisation (no BPE / subword modelling)</li>
+            <li>Vocab coupling to training artifacts (non-portable checkpoints)</li>
+            <li>Weak validation split (~2k samples)</li>
+            <li>LSTM architecture limits long-range dependency modelling</li>
+        </ul>
+
+        <div class="section-heading">Future Improvements</div>
+        <ul>
+            <li>Replace tokenizer with BPE or SentencePiece</li>
+            <li>Upgrade to Transformer architecture with attention</li>
+            <li>Improve dataset splitting for proper generalisation metrics</li>
+            <li>Add model checkpoint migration tooling</li>
+        </ul>
+
+    </div>
+
+    <script>
+        const btn = document.getElementById('theme-toggle');
+        const label = document.getElementById('toggle-label');
+
+        if (document.documentElement.classList.contains("dark")) {
+            label.textContent = "light";
+        }
+
+        btn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            label.textContent = isDark ? "light" : "dark";
+        });
+    </script>
+
+</body>
+
+</html>

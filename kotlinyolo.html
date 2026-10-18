@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <script>
+        (function () {
+            var t = localStorage.getItem("theme");
+            if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KotlinYOLO — David Long</title>
+
+        <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="study">
+
+    <header class="bar">
+        <a class="brand" href="index.html">David Long</a>
+        <nav class="bar-nav">
+            <a href="index.html#work">Work</a>
+        </nav>
+        <div class="bar-end">
+            <button id="theme-toggle" type="button" aria-label="Toggle color theme">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <a href="index.html" class="back">← back</a>
+
+        <div class="resume-name">KotlinYOLO</div>
+
+        <div class="resume-contact">
+            <a href="https://github.com/daverlon/KotlinYOLO" target="_blank">
+                github.com/daverlon/KotlinYOLO
+            </a>
+        </div>
+
+        <div class="meta">
+            Kotlin · Android · ONNX Runtime · Vuzix Smart Glasses
+        </div>
+
+        <div class="section-heading">Overview</div>
+        <div class="text-block">
+            KotlinYOLO is a real-time object detection system built for Android-based smart glasses,
+            focusing on efficient on-device inference using YOLO models in ONNX format.
+        </div>
+
+        <div class="image-center">
+            <img src="img/kotlinyolo_preview.png" alt="KotlinYOLO preview" width="350px">
+        </div>
+
+        <div class="text-block">
+            The project explores the practical limits of edge AI deployment on constrained wearable hardware,
+            balancing latency, thermal constraints, and usability.
+        </div>
+
+        <div class="section-heading">Key Features</div>
+        <ul>
+            <li>Real-time object detection using YOLOv8n / YOLO11n models</li>
+            <li>ONNX Runtime integration using Java/Kotlin APIs</li>
+            <li>CameraX pipeline with dynamic resolution handling</li>
+            <li>Bounding box rendering on live camera feed</li>
+            <li>Support for Vuzix M400 and Blade 2 devices</li>
+        </ul>
+
+        <div class="section-heading">Architecture</div>
+        <div class="text-block">
+            The system follows a lightweight pipeline:
+        </div>
+
+        <ul>
+            <li>Camera frame acquisition via <code>CameraX</code></li>
+            <li>Preprocessing into 640×640 tensor format</li>
+            <li>ONNX model inference using <code>OrtSession</code></li>
+            <li>Post-processing (NMS, bounding box scaling)</li>
+            <li>Overlay rendering to display detections</li>
+        </ul>
+
+        <div class="section-heading">Technical Challenges</div>
+        <ul>
+            <li>Achieving usable FPS on low-power wearable hardware</li>
+            <li>Handling aspect ratio mismatch without distortion</li>
+            <li>Minimising memory allocations in real-time loops</li>
+            <li>Balancing CPU vs GPU execution paths in ONNX Runtime</li>
+        </ul>
+
+        <div class="section-heading">What I Learned</div>
+        <ul>
+            <li>Practical constraints of edge AI vs cloud inference</li>
+            <li>Android performance optimisation at the system level</li>
+            <li>Trade-offs between model size, accuracy, and latency</li>
+            <li>Designing systems for real-world hardware limitations</li>
+        </ul>
+
+        <div class="section-heading">Future Work</div>
+        <ul>
+            <li>Segmentation model support (YOLOv8-seg)</li>
+            <li>Hardware acceleration improvements</li>
+            <li>Server-assisted inference fallback</li>
+            <li>Integration into production AR workflows</li>
+        </ul>
+
+    </div>
+
+    <script src="theme.js"></script>
+
+</body>
+
+</html>
